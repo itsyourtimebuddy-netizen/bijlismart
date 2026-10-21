@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BijliSmart</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b5d3b">
+<link rel="icon" href="icon-192.png">
+<style>
+:root{--bg:#f6f8f4;--card:#fff;--tx:#14231a;--mu:#5a6b60;--bd:#d8e0d6;--g:#0b5d3b;--l:#a6e22e;--er:#b3261e}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1612;--card:#17221c;--tx:#e8f0ea;--mu:#9fb0a5;--bd:#2c3b32;--g:#5fd08f;--l:#a6e22e;--er:#ff8a80}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 system-ui,"Noto Sans Gujarati","Noto Sans Devanagari","Shruti","Nirmala UI",sans-serif;padding-bottom:70px}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 16px;background:#0b5d3b;color:#fff}
+header h1{margin:0;font-size:1.2rem}header small{display:block;opacity:.85}
+select,input,button{font:inherit}
+select,input{width:100%;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx)}
+header select{width:auto}
+main{max-width:640px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:14px}
+h2{margin:0 0 8px;font-size:1.2rem}h3{margin:12px 0 6px;font-size:1rem}
+label{display:block;margin:10px 0 4px;font-weight:600}
+.btn{background:var(--g);color:#fff;border:0;border-radius:10px;padding:11px 16px;cursor:pointer;margin:12px 8px 0 0}
+.btn.alt{background:transparent;color:var(--g);border:1px solid var(--g)}
+@media (prefers-color-scheme:dark){.btn{color:#0e1612}}
+.err{color:var(--er);font-size:.9rem;min-height:1em}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.m{border:1px solid var(--bd);border-radius:12px;padding:10px;border-left:4px solid var(--l)}
+.m b{display:block;font-size:1.15rem}.m span{color:var(--mu);font-size:.85rem}
+.mu{color:var(--mu);font-size:.9rem}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--card);border-top:1px solid var(--bd)}
+nav button{flex:1;padding:12px 4px;background:none;border:0;color:var(--mu);cursor:pointer}
+nav button.on{color:var(--g);font-weight:700;border-top:3px solid var(--l)}
+.v{display:none}.v.on{display:block}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--l);outline-offset:2px}
+@media print{header select,nav,.noprint{display:none!important}body{background:#fff;color:#000}}
+input,select,.btn,nav button{min-height:44px}
+input[aria-invalid=true]{border-color:var(--er);border-width:2px}
+.err{display:block;margin:4px 0 0}
+.po{display:none}
+.wn{border-left:4px solid #d4a017;padding:8px 10px;background:rgba(212,160,23,.14);border-radius:8px}
+nav{justify-content:center}nav button{max-width:200px}
+@media (max-width:359px){.grid{grid-template-columns:1fr}}
+@media (min-width:900px){main{max-width:980px}#v-an.on{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}#v-home .card,#v-set .card{max-width:640px}}
+@media print{.po{display:block}header small{display:none}.card{break-inside:avoid;border-color:#999}}
+details{margin:12px 0}summary{cursor:pointer;font-weight:600;min-height:44px;display:flex;align-items:center}
+.bd{font-size:.7rem;font-style:normal;border:1px solid var(--bd);border-radius:20px;padding:0 6px;margin-left:6px;white-space:nowrap}
+.bar{height:14px;background:var(--bd);border-radius:8px;overflow:hidden;margin:4px 0 10px}.bar i{display:block;height:100%;background:var(--g)}
+@media (prefers-color-scheme:dark){.bar i{background:var(--l)}}
+.as li{margin:2px 0}
+@media (min-width:900px){#v-solar.on{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>⚡ BijliSmart</h1><small data-i="tag"></small></div>
+  <select id="lang" aria-label="Language / ભાષા / भाषा"><option value="gu">ગુજરાતી</option><option value="hi">हिन्दी</option><option value="en">English</option></select>
+</header>
+<main>
+<section id="v-home" class="v on">
+  <div class="card"><h2 data-i="w_t"></h2><p data-i="w_p"></p>
+  <button class="btn" data-go="an" data-i="start"></button></div>
+  <div class="card mu" data-i="disc"></div>
+</section>
+
+<section id="v-an" class="v">
+  <form class="card noprint" id="formcard" novalidate>
+    <h2 data-i="nav_an"></h2>
+    <p class="mu" data-i="pv_s"></p>
+    <p class="err" id="sum" role="alert"></p>
+    <div id="fmain"></div>
+    <label for="cat" data-i="f_cat"></label>
+    <select id="cat"><option value="res" data-i="c_res"></option><option value="com" data-i="c_com"></option><option value="ind" data-i="c_ind"></option></select>
+    <label for="dc" data-i="f_dc"></label>
+    <select id="dc"><option>UGVCL</option><option>MGVCL</option><option>DGVCL</option><option>PGVCL</option><option>Torrent Power</option><option value="o" data-i="other"></option></select>
+    <h3 data-i="p_h"></h3><p class="mu" data-i="p_n"></p>
+    <div id="fprev"></div>
+    <button class="btn" type="submit" data-i="calc"></button>
+    <button class="btn alt" type="button" id="reset" data-i="reset"></button>
+  </form>
+  <div id="res" aria-live="polite"></div>
+</section>
+
+<section id="v-solar" class="v">
+  <form class="card noprint" id="sform" novalidate>
+    <h2 data-i="s_h"></h2><p class="mu" data-i="s_p"></p><p class="mu" data-i="pv_s"></p>
+    <p class="err" id="ssum" role="alert"></p>
+    <div id="sbody"></div>
+    <button class="btn" type="submit" data-i="sb_calc"></button>
+    <button class="btn alt" type="button" id="s_reset" data-i="reset"></button>
+  </form>
+  <div id="sres" aria-live="polite"></div>
+</section>
+
+<section id="v-set" class="v"><div class="card"><h2 data-i="nav_set"></h2>
+  <h3 data-i="pv_h"></h3><p data-i="pv_p"></p>
+  <h3 data-i="hp_h"></h3><p data-i="hp_p"></p>
+  <button class="btn alt" id="clear" data-i="clear"></button></div></section>
+</main>
+<nav aria-label="Main">
+  <button data-go="home" data-i="nav_home"></button><button data-go="an" data-i="nav_an"></button>
+  <button data-go="solar" data-i="nav_solar"></button><button data-go="set" data-i="nav_set"></button>
+</nav>
+
+<script>
+/* ===== TRANSLATIONS: all visible text lives here ===== */
+const T={
+en:{pv_s:"Privacy: your numbers are calculated only in this browser and are never uploaded. Please do not enter your name, phone number or consumer number.",tag:"Smart Energy, Simple Life",nav_home:"Home",nav_an:"Bill Analyzer",nav_solar:"Solar",nav_set:"Settings",
+w_t:"Understand your electricity bill",w_p:"Enter your bill amount and units to see your average cost per unit, daily use and simple saving tips. Everything is calculated on your phone.",start:"Start",
+disc:"Results are estimates from the numbers you enter. They are not an official tariff or a guarantee of savings.",
+f_bill:"Total bill amount (₹)",f_units:"Units consumed (kWh)",f_days:"Billing period (days)",f_cat:"Consumer category",c_res:"Residential",c_com:"Commercial",c_ind:"Industrial",f_dc:"Distribution company",other:"Other",
+p_h:"Previous bill (optional)",p_n:"Add this to compare with your current bill.",f_pbill:"Previous bill amount (₹)",f_punits:"Previous units (kWh)",f_pdays:"Previous billing days",
+calc:"Analyze",reset:"Reset",print:"Print / Save report",
+e_neg:"Negative numbers are not allowed.",e_days:"Billing days must be a whole number from 1 to 366.",
+r_h:"Your results",r_bill:"Total bill",r_units:"Units consumed",r_cpu:"Average cost per unit",r_du:"Average daily units",r_dc:"Average daily cost",r_m:"Estimated units per 30 days",
+cmp_h:"Compared with previous bill (per 30 days)",cmp_u:"Units",cmp_b:"Bill amount",up:"higher",dn:"lower",same:"no change",
+ex_h:"What this means",ex:"Your bill was ₹{b} for {u} kWh over {d} days, so the average is ₹{c} per unit. This includes fixed charges, taxes and other fees, so it is NOT the official tariff. We cannot say whether your bill is high or normal without a reliable comparison.",
+t_h:"Saving tips",
+tips_res:"Use a fan or AC with a good star rating and keep AC filters clean.|Switch off lights and appliances when not needed, and avoid standby mode.|Use LED lights and run heavy appliances (like a water pump) at planned times.",
+tips_com:"Check lighting and cooling in your shop and switch to LED where possible.|Switch off display lights, signs and equipment after closing.|Service ACs and refrigerators regularly so they work efficiently.",
+tips_ind:"Check motors and pumps for efficiency and proper maintenance.|Review your running hours and avoid idle machine time.|Consider an energy audit by a qualified professional.",
+
+pv_h:"Privacy",pv_p:"Your numbers stay in your browser. Nothing is uploaded. We do not ask for name, phone, address or consumer number. Only your language choice is saved on this device.",
+hp_h:"Help",hp_p:"Enter the amount, units and days from your electricity bill, then tap Analyze. Add a previous bill to compare.",clear:"Clear saved data on this device",cleared:"Saved data cleared.",e_req:"Please enter a value.",e_nan:"Use digits and a decimal point only.",e_zero:"Value must be more than 0.",e_big:"This value is too large for this calculator.",e_prev:"Fill all three previous-bill fields, or leave all of them empty.",e_sum:"Please correct the highlighted fields.",w_cpu:"Your average cost per unit looks unusual. Please check that the amount and units were entered correctly.",n_est:"This is an estimate based on the numbers you entered. It is not an official bill calculation by UGVCL, MGVCL, DGVCL, PGVCL or Torrent Power.",pr_h:"BijliSmart – Bill Analysis Report",pr_d:"Date",s_h:"Solar Savings Calculator",s_p:"Estimate rooftop solar size, generation, savings and payback. Only the monthly bill is required; everything else is optional or pre-filled with editable assumptions.",sf_state:"State",st_gj:"Gujarat",sf_city:"City",cities:"Ahmedabad|Surat|Vadodara|Rajkot|Gandhinagar|Bhavnagar|Jamnagar|Other",sf_bill:"Average monthly electricity bill (₹)",sf_units:"Average monthly consumption (kWh) – optional",h_units:"Leave blank if you do not know. We then estimate it from your bill using an assumed cost per unit (see Advanced assumptions).",sf_area:"Available rooftop area – optional",sf_au:"Area unit",u_sqft:"Square feet",u_sqm:"Square metres",sf_day:"Daytime electricity use",d_low:"Low (mostly evening and night)",d_med:"Medium",d_high:"High (mostly daytime)",h_day:"Solar produces power only in the daytime. The more you use in the daytime, the more solar power you use directly.",sf_size:"Proposed solar size (kW) – optional",h_size:"Leave blank to use the suggested size.",sf_cost:"Installed cost per kW (₹)",h_cost:"An editable assumption, not a quotation. Replace it with real quotes.",sf_sub:"Verified subsidy amount (₹)",h_sub:"Keep 0 unless you have verified the scheme, your eligibility and the amount.",mo_h:"More options (optional)",sf_maint:"Annual maintenance cost (₹)",h_maint:"Blank = 1% of the installed cost per year (assumption).",sf_esc:"Yearly increase in electricity tariff (%)",h_esc:"Optional. 0 is the cautious choice.",sf_rate:"Avoidable energy rate (₹ per kWh)",h_rate:"The part of each unit's price that solar can really save. Blank = 70% of your average bill cost per unit (assumption). Fixed charges and taxes do not disappear.",sf_export:"Export rate (₹ per kWh)",h_export:"Payment for units sent to the grid. Blank = 0, because the rate is not verified.",adv_h:"Advanced assumptions (editable)",sf_avg:"Assumed bill cost per unit if units are unknown (₹)",sf_psh:"Full-sun hours per day",sf_loss:"System losses (%)",sf_deg:"Panel degradation per year (%)",sf_use:"Usable share of the roof (%)",sf_apk:"Roof area needed per kW (square metres)",sb_calc:"Calculate solar savings",sb_re:"Recalculate",sb_q:"Continue to Solar Quotation",q_n:"The Solar Quotation feature is planned for Phase 3 and is not available yet. Nothing you entered is saved or sent anywhere.",e_sub:"Subsidy cannot be more than the installed cost.",e_rng:"Value is outside the allowed range.",e_nosz:"A solar size could not be worked out. Enter a proposed size, or check roof area and consumption.",rs_h:"Your solar estimate",r_sug:"Suggested system size",r_used:"System size used",r_gd:"Daily generation",r_gm:"Monthly generation",r_gy:"Annual generation (year 1)",r_pct:"Share of your consumption solar could generate",r_cost:"Estimated installed cost",r_subs:"Subsidy (verified only)",r_net:"Estimated net upfront cost",r_sm:"Estimated monthly savings",r_sy:"Estimated annual savings",r_mt:"Annual maintenance cost",r_nb:"Estimated net annual benefit",r_pay:"Simple payback period",r_25:"25-year cumulative net benefit",yrs:"years",n_pay:"Payback cannot be estimated under these assumptions.",r_self:"Solar used directly (year 1)",r_exp:"Solar exported to grid (year 1)",r_roof:"Estimated usable roof capacity",r_dsh:"Daytime share of your use",b_u:"Your input",b_e:"Estimated",b_a:"Assumption",v_h:"Monthly electricity spending",v_now:"Now",v_aft:"After solar (estimated)",v_g:"Monthly solar generation compared with your consumption",as_h:"Assumptions used",w_roof:"The chosen size is larger than the estimated usable roof capacity ({x} kW).",w_exp:"Solar may produce more than the units you use in the daytime. The extra is exported, and its value depends on net-metering rules and your DISCOM, so only an export rate you entered is counted.",w_unit:"Monthly units were estimated from your bill, so these results are rougher.",w_prelim:"Preliminary estimate: the exact tariff, export rate, subsidy and approvals have not been verified.",w_cap:"Savings were limited to your current bill.",w_inv:"Inverter replacement and other future costs are not included.",sd:"These results are estimates, not a guaranteed quotation or an official technical feasibility assessment. Subsidies, net metering and grid connection follow current official rules and your eligibility. Savings and payback are not guaranteed.",f_h:"How it is calculated",f_t:"Generation = size × full-sun hours × (1 − losses). Savings = solar used directly × avoidable rate + exported units × export rate. Net annual benefit = savings − maintenance. Payback = net upfront cost ÷ net annual benefit. The 25-year figure applies degradation and tariff increase.",sg_res:"Sized to match your yearly consumption, limited by roof area.",sg_biz:"Sized to match your daytime use so you depend less on export, limited by roof area.",sg_h:"Basis of suggestion",pr_s:"BijliSmart – Solar Savings Estimate Report"},
+hi:{pv_s:"गोपनीयता: आपके आंकड़े केवल इसी ब्राउज़र में गिने जाते हैं और कभी अपलोड नहीं होते। कृपया अपना नाम, फोन नंबर या उपभोक्ता नंबर न डालें।",tag:"स्मार्ट ऊर्जा, सरल जीवन",nav_home:"होम",nav_an:"बिल विश्लेषक",nav_solar:"सोलर",nav_set:"सेटिंग्स",
+w_t:"अपना बिजली बिल समझें",w_p:"बिल की राशि और यूनिट डालें और प्रति यूनिट औसत लागत, दैनिक खपत और बचत के आसान सुझाव देखें। सारी गणना आपके फोन पर होती है।",start:"शुरू करें",
+disc:"नतीजे आपके डाले गए आंकड़ों के अनुमान हैं। ये आधिकारिक टैरिफ या बचत की गारंटी नहीं हैं।",
+f_bill:"कुल बिल राशि (₹)",f_units:"खपत यूनिट (kWh)",f_days:"बिलिंग अवधि (दिन)",f_cat:"उपभोक्ता श्रेणी",c_res:"आवासीय",c_com:"वाणिज्यिक",c_ind:"औद्योगिक",f_dc:"वितरण कंपनी",other:"अन्य",
+p_h:"पिछला बिल (वैकल्पिक)",p_n:"वर्तमान बिल से तुलना के लिए यह जोड़ें।",f_pbill:"पिछले बिल की राशि (₹)",f_punits:"पिछली यूनिट (kWh)",f_pdays:"पिछले बिल के दिन",
+calc:"विश्लेषण करें",reset:"रीसेट",print:"रिपोर्ट प्रिंट / सेव करें",
+e_neg:"ऋणात्मक संख्याएं मान्य नहीं हैं।",e_days:"दिन 1 से 366 के बीच पूर्ण संख्या होने चाहिए।",
+r_h:"आपके नतीजे",r_bill:"कुल बिल",r_units:"खपत यूनिट",r_cpu:"औसत लागत प्रति यूनिट",r_du:"औसत दैनिक यूनिट",r_dc:"औसत दैनिक लागत",r_m:"30 दिन की अनुमानित यूनिट",
+cmp_h:"पिछले बिल से तुलना (30 दिन के हिसाब से)",cmp_u:"यूनिट",cmp_b:"बिल राशि",up:"अधिक",dn:"कम",same:"कोई बदलाव नहीं",
+ex_h:"इसका मतलब",ex:"आपका बिल {d} दिनों में {u} kWh के लिए ₹{b} है, इसलिए औसत ₹{c} प्रति यूनिट है। इसमें फिक्स्ड चार्ज, कर और अन्य शुल्क शामिल हैं, इसलिए यह आधिकारिक टैरिफ नहीं है। भरोसेमंद तुलना के बिना हम नहीं कह सकते कि बिल ज्यादा है या सामान्य।",
+t_h:"बचत के सुझाव",
+tips_res:"अच्छी स्टार रेटिंग वाला पंखा या AC इस्तेमाल करें और AC के फ़िल्टर साफ रखें।|जरूरत न हो तो लाइट और उपकरण बंद करें, स्टैंडबाय मोड से बचें।|LED लाइट लगाएं और पानी की मोटर जैसे भारी उपकरण तय समय पर चलाएं।",
+tips_com:"दुकान की लाइटिंग और कूलिंग जांचें और जहां संभव हो LED लगाएं।|बंद करने के बाद डिस्प्ले लाइट, साइन और उपकरण बंद करें।|AC और फ्रिज की नियमित सर्विस कराएं ताकि वे कुशलता से चलें।",
+tips_ind:"मोटर और पंप की दक्षता और रखरखाव जांचें।|चलने के घंटे देखें और मशीन को बेकार चलने से बचाएं।|योग्य विशेषज्ञ से एनर्जी ऑडिट कराने पर विचार करें।",
+
+pv_h:"गोपनीयता",pv_p:"आपके आंकड़े आपके ब्राउज़र में ही रहते हैं। कुछ भी अपलोड नहीं होता। हम नाम, फोन, पता या उपभोक्ता नंबर नहीं मांगते। इस डिवाइस पर केवल भाषा की पसंद सेव होती है।",
+hp_h:"मदद",hp_p:"बिजली बिल से राशि, यूनिट और दिन भरें और विश्लेषण करें दबाएं। तुलना के लिए पिछला बिल जोड़ें।",clear:"इस डिवाइस का सेव डेटा हटाएं",cleared:"सेव डेटा हटा दिया गया।",e_req:"कृपया मान भरें।",e_nan:"केवल अंक और दशमलव बिंदु लिखें।",e_zero:"मान 0 से अधिक होना चाहिए।",e_big:"यह मान इस कैलकुलेटर के लिए बहुत बड़ा है।",e_prev:"पिछले बिल के तीनों खाने भरें, या सभी खाली छोड़ें।",e_sum:"कृपया चिह्नित खानों को सुधारें।",w_cpu:"औसत लागत प्रति यूनिट असामान्य लगती है। कृपया जांचें कि राशि और यूनिट सही भरे हैं।",n_est:"यह आपके डाले गए आंकड़ों पर आधारित अनुमान है। यह UGVCL, MGVCL, DGVCL, PGVCL या Torrent Power की आधिकारिक बिल गणना नहीं है।",pr_h:"BijliSmart – बिल विश्लेषण रिपोर्ट",pr_d:"तारीख",s_h:"सोलर बचत कैलकुलेटर",s_p:"छत के सोलर का आकार, उत्पादन, बचत और भुगतान अवधि का अनुमान लगाएं। केवल मासिक बिल जरूरी है; बाकी वैकल्पिक हैं या बदले जा सकने वाले अनुमानों से भरे हैं।",sf_state:"राज्य",st_gj:"गुजरात",sf_city:"शहर",cities:"अहमदाबाद|सूरत|वडोदरा|राजकोट|गांधीनगर|भावनगर|जामनगर|अन्य",sf_bill:"औसत मासिक बिजली बिल (₹)",sf_units:"औसत मासिक खपत (kWh) – वैकल्पिक",h_units:"पता न हो तो खाली छोड़ें। तब हम बिल से अनुमानित प्रति यूनिट लागत के आधार पर इसका अनुमान लगाते हैं (उन्नत अनुमान देखें)।",sf_area:"उपलब्ध छत का क्षेत्रफल – वैकल्पिक",sf_au:"क्षेत्रफल की इकाई",u_sqft:"वर्ग फुट",u_sqm:"वर्ग मीटर",sf_day:"दिन में बिजली का उपयोग",d_low:"कम (ज्यादातर शाम और रात)",d_med:"मध्यम",d_high:"अधिक (ज्यादातर दिन में)",h_day:"सोलर केवल दिन में बिजली बनाता है। दिन में जितना ज्यादा उपयोग, उतनी ज्यादा सोलर बिजली सीधे काम आती है।",sf_size:"प्रस्तावित सोलर आकार (kW) – वैकल्पिक",h_size:"सुझाए गए आकार के लिए खाली छोड़ें।",sf_cost:"स्थापना लागत प्रति kW (₹)",h_cost:"यह बदला जा सकने वाला अनुमान है, कोटेशन नहीं। असली कोटेशन से बदलें।",sf_sub:"सत्यापित सब्सिडी राशि (₹)",h_sub:"योजना, अपनी पात्रता और राशि सत्यापित किए बिना 0 रखें।",mo_h:"और विकल्प (वैकल्पिक)",sf_maint:"वार्षिक रखरखाव खर्च (₹)",h_maint:"खाली = स्थापना लागत का 1% प्रति वर्ष (अनुमान)।",sf_esc:"बिजली दर में वार्षिक वृद्धि (%)",h_esc:"वैकल्पिक। 0 सावधानी भरा विकल्प है।",sf_rate:"बचने योग्य ऊर्जा दर (₹ प्रति kWh)",h_rate:"हर यूनिट की कीमत का वह हिस्सा जो सोलर सच में बचा सकता है। खाली = आपके औसत बिल प्रति यूनिट का 70% (अनुमान)। फिक्स्ड चार्ज और कर खत्म नहीं होते।",sf_export:"निर्यात दर (₹ प्रति kWh)",h_export:"ग्रिड को भेजी गई यूनिट का भुगतान। खाली = 0, क्योंकि दर सत्यापित नहीं है।",adv_h:"उन्नत अनुमान (बदले जा सकते हैं)",sf_avg:"यूनिट पता न होने पर माना गया बिल प्रति यूनिट (₹)",sf_psh:"प्रतिदिन पूर्ण धूप के घंटे",sf_loss:"सिस्टम हानि (%)",sf_deg:"पैनल की वार्षिक गिरावट (%)",sf_use:"छत का उपयोगी हिस्सा (%)",sf_apk:"प्रति kW छत का क्षेत्रफल (वर्ग मीटर)",sb_calc:"सोलर बचत निकालें",sb_re:"फिर से गणना करें",sb_q:"सोलर कोटेशन पर आगे बढ़ें",q_n:"सोलर कोटेशन सुविधा तीसरे चरण में आएगी और अभी उपलब्ध नहीं है। आपने जो भरा वह कहीं सेव या भेजा नहीं जाता।",e_sub:"सब्सिडी स्थापना लागत से अधिक नहीं हो सकती।",e_rng:"मान अनुमत सीमा से बाहर है।",e_nosz:"सोलर आकार तय नहीं हो सका। प्रस्तावित आकार भरें, या छत का क्षेत्रफल और खपत जांचें।",rs_h:"आपका सोलर अनुमान",r_sug:"सुझाया गया सिस्टम आकार",r_used:"उपयोग किया गया आकार",r_gd:"दैनिक उत्पादन",r_gm:"मासिक उत्पादन",r_gy:"वार्षिक उत्पादन (पहला वर्ष)",r_pct:"आपकी खपत का जितना हिस्सा सोलर बना सकता है",r_cost:"अनुमानित स्थापना लागत",r_subs:"सब्सिडी (केवल सत्यापित)",r_net:"अनुमानित शुद्ध प्रारंभिक लागत",r_sm:"अनुमानित मासिक बचत",r_sy:"अनुमानित वार्षिक बचत",r_mt:"वार्षिक रखरखाव खर्च",r_nb:"अनुमानित शुद्ध वार्षिक लाभ",r_pay:"सरल भुगतान अवधि",r_25:"25 वर्ष का कुल शुद्ध लाभ",yrs:"वर्ष",n_pay:"इन अनुमानों में भुगतान अवधि का अनुमान नहीं लगाया जा सकता।",r_self:"सीधे उपयोग हुई सोलर बिजली (पहला वर्ष)",r_exp:"ग्रिड को भेजी गई सोलर बिजली (पहला वर्ष)",r_roof:"अनुमानित उपयोगी छत क्षमता",r_dsh:"आपके उपयोग का दिन वाला हिस्सा",b_u:"आपकी जानकारी",b_e:"अनुमानित",b_a:"मान्यता",v_h:"मासिक बिजली खर्च",v_now:"अभी",v_aft:"सोलर के बाद (अनुमानित)",v_g:"मासिक सोलर उत्पादन बनाम आपकी खपत",as_h:"उपयोग की गई मान्यताएं",w_roof:"चुना गया आकार छत की अनुमानित उपयोगी क्षमता ({x} kW) से बड़ा है।",w_exp:"सोलर दिन में आपके उपयोग से ज्यादा बिजली बना सकता है। अतिरिक्त बिजली ग्रिड को जाती है और उसका मूल्य नेट-मीटरिंग नियमों और आपकी डिस्कॉम पर निर्भर है, इसलिए केवल आपकी भरी निर्यात दर गिनी गई है।",w_unit:"मासिक यूनिट बिल से अनुमानित हैं, इसलिए ये नतीजे कम सटीक हैं।",w_prelim:"प्रारंभिक अनुमान: सटीक टैरिफ, निर्यात दर, सब्सिडी और मंजूरियां सत्यापित नहीं हैं।",w_cap:"बचत आपके मौजूदा बिल तक सीमित की गई है।",w_inv:"इन्वर्टर बदलने और अन्य भविष्य के खर्च शामिल नहीं हैं।",sd:"ये नतीजे अनुमान हैं, गारंटीशुदा कोटेशन या आधिकारिक तकनीकी व्यवहार्यता आकलन नहीं। सब्सिडी, नेट मीटरिंग और ग्रिड कनेक्शन मौजूदा आधिकारिक नियमों और आपकी पात्रता पर निर्भर हैं। बचत और भुगतान अवधि की गारंटी नहीं है।",f_h:"गणना कैसे होती है",f_t:"उत्पादन = आकार × पूर्ण धूप घंटे × (1 − हानि)। बचत = सीधे उपयोग हुई सोलर बिजली × बचने योग्य दर + निर्यात यूनिट × निर्यात दर। शुद्ध वार्षिक लाभ = बचत − रखरखाव। भुगतान अवधि = शुद्ध प्रारंभिक लागत ÷ शुद्ध वार्षिक लाभ। 25 वर्ष के आंकड़े में पैनल गिरावट और टैरिफ वृद्धि शामिल है।",sg_res:"आपकी वार्षिक खपत के अनुसार, छत के क्षेत्रफल की सीमा में।",sg_biz:"आपके दिन के उपयोग के अनुसार ताकि निर्यात पर कम निर्भर रहें, छत के क्षेत्रफल की सीमा में।",sg_h:"सुझाव का आधार",pr_s:"BijliSmart – सोलर बचत अनुमान रिपोर्ट"},
+gu:{pv_s:"ગોપનીયતા: તમારા આંકડાની ગણતરી ફક્ત આ બ્રાઉઝરમાં જ થાય છે અને ક્યારેય અપલોડ થતા નથી. કૃપા કરીને તમારું નામ, ફોન નંબર કે ગ્રાહક નંબર ન નાખો.",tag:"સ્માર્ટ ઊર્જા, સરળ જીવન",nav_home:"હોમ",nav_an:"બિલ વિશ્લેષક",nav_solar:"સોલાર",nav_set:"સેટિંગ્સ",
+w_t:"તમારું વીજળી બિલ સમજો",w_p:"બિલની રકમ અને યુનિટ નાખો અને પ્રતિ યુનિટ સરેરાશ ખર્ચ, રોજનો વપરાશ અને બચતના સરળ સૂચનો જુઓ. બધી ગણતરી તમારા ફોનમાં જ થાય છે.",start:"શરૂ કરો",
+disc:"પરિણામો તમે નાખેલા આંકડા પરથી અંદાજ છે. તે સત્તાવાર ટેરિફ કે બચતની ગેરંટી નથી.",
+f_bill:"કુલ બિલની રકમ (₹)",f_units:"વપરાયેલ યુનિટ (kWh)",f_days:"બિલિંગ સમયગાળો (દિવસ)",f_cat:"ગ્રાહક શ્રેણી",c_res:"રહેણાંક",c_com:"વાણિજ્યિક",c_ind:"ઔદ્યોગિક",f_dc:"વિતરણ કંપની",other:"અન્ય",
+p_h:"પાછલું બિલ (વૈકલ્પિક)",p_n:"હાલના બિલ સાથે સરખામણી માટે આ ઉમેરો.",f_pbill:"પાછલા બિલની રકમ (₹)",f_punits:"પાછલા યુનિટ (kWh)",f_pdays:"પાછલા બિલના દિવસ",
+calc:"વિશ્લેષણ કરો",reset:"રીસેટ",print:"રિપોર્ટ પ્રિન્ટ / સેવ કરો",
+e_neg:"નકારાત્મક સંખ્યાઓ માન્ય નથી.",e_days:"દિવસ 1 થી 366 વચ્ચેની પૂર્ણ સંખ્યા હોવા જોઈએ.",
+r_h:"તમારા પરિણામ",r_bill:"કુલ બિલ",r_units:"વપરાયેલ યુનિટ",r_cpu:"સરેરાશ ખર્ચ પ્રતિ યુનિટ",r_du:"સરેરાશ રોજના યુનિટ",r_dc:"સરેરાશ રોજનો ખર્ચ",r_m:"30 દિવસના અંદાજિત યુનિટ",
+cmp_h:"પાછલા બિલ સાથે સરખામણી (30 દિવસ મુજબ)",cmp_u:"યુનિટ",cmp_b:"બિલની રકમ",up:"વધુ",dn:"ઓછું",same:"કોઈ ફેરફાર નથી",
+ex_h:"આનો અર્થ",ex:"તમારું બિલ {d} દિવસમાં {u} kWh માટે ₹{b} છે, તેથી સરેરાશ ₹{c} પ્રતિ યુનિટ આવે છે. આમાં ફિક્સ ચાર્જ, કર અને અન્ય ફી સામેલ છે, તેથી આ સત્તાવાર ટેરિફ નથી. વિશ્વસનીય સરખામણી વગર બિલ વધારે છે કે સામાન્ય તે કહી શકાય નહીં.",
+t_h:"બચતના સૂચનો",
+tips_res:"સારા સ્ટાર રેટિંગવાળા પંખા કે AC વાપરો અને AC ના ફિલ્ટર સાફ રાખો.|જરૂર ન હોય ત્યારે લાઇટ અને ઉપકરણ બંધ કરો, સ્ટેન્ડબાય મોડથી બચો.|LED લાઇટ લગાવો અને પાણીની મોટર જેવા ભારે ઉપકરણ નક્કી સમયે ચલાવો.",
+tips_com:"દુકાનની લાઇટિંગ અને કૂલિંગ તપાસો અને શક્ય હોય ત્યાં LED લગાવો.|દુકાન બંધ કર્યા પછી ડિસ્પ્લે લાઇટ, સાઇન અને ઉપકરણ બંધ કરો.|AC અને ફ્રીજની નિયમિત સર્વિસ કરાવો જેથી તે કાર્યક્ષમ ચાલે.",
+tips_ind:"મોટર અને પંપની કાર્યક્ષમતા અને જાળવણી તપાસો.|ચાલવાના કલાકો જુઓ અને મશીન નકામું ચાલતું અટકાવો.|લાયક નિષ્ણાત પાસે એનર્જી ઓડિટ કરાવવા વિચારો.",
+
+pv_h:"ગોપનીયતા",pv_p:"તમારા આંકડા તમારા બ્રાઉઝરમાં જ રહે છે. કંઈ અપલોડ થતું નથી. અમે નામ, ફોન, સરનામું કે ગ્રાહક નંબર માગતા નથી. આ ડિવાઇસ પર ફક્ત ભાષાની પસંદગી સેવ થાય છે.",
+hp_h:"મદદ",hp_p:"વીજળી બિલમાંથી રકમ, યુનિટ અને દિવસ ભરો અને વિશ્લેષણ કરો દબાવો. સરખામણી માટે પાછલું બિલ ઉમેરો.",clear:"આ ડિવાઇસનો સેવ ડેટા કાઢી નાખો",cleared:"સેવ ડેટા કાઢી નાખ્યો.",e_req:"કૃપા કરીને કિંમત ભરો.",e_nan:"ફક્ત આંકડા અને દશાંશ ચિહ્ન લખો.",e_zero:"કિંમત 0 થી વધુ હોવી જોઈએ.",e_big:"આ કિંમત આ કેલ્ક્યુલેટર માટે ખૂબ મોટી છે.",e_prev:"પાછલા બિલના ત્રણેય ખાના ભરો, અથવા બધા ખાલી રાખો.",e_sum:"કૃપા કરીને ચિહ્નિત ખાના સુધારો.",w_cpu:"સરેરાશ ખર્ચ પ્રતિ યુનિટ અસામાન્ય લાગે છે. કૃપા કરીને રકમ અને યુનિટ સાચા ભર્યા છે કે નહીં તે તપાસો.",n_est:"આ તમે નાખેલા આંકડા પર આધારિત અંદાજ છે. તે UGVCL, MGVCL, DGVCL, PGVCL કે Torrent Power ની સત્તાવાર બિલ ગણતરી નથી.",pr_h:"BijliSmart – બિલ વિશ્લેષણ રિપોર્ટ",pr_d:"તારીખ",s_h:"સોલાર બચત કેલ્ક્યુલેટર",s_p:"છત પરના સોલારનું કદ, ઉત્પાદન, બચત અને રકમ પાછી મળવાનો સમય અંદાજો. ફક્ત માસિક બિલ જરૂરી છે; બાકી વૈકલ્પિક છે અથવા બદલી શકાય તેવા અંદાજોથી ભરેલા છે.",sf_state:"રાજ્ય",st_gj:"ગુજરાત",sf_city:"શહેર",cities:"અમદાવાદ|સુરત|વડોદરા|રાજકોટ|ગાંધીનગર|ભાવનગર|જામનગર|અન્ય",sf_bill:"સરેરાશ માસિક વીજળી બિલ (₹)",sf_units:"સરેરાશ માસિક વપરાશ (kWh) – વૈકલ્પિક",h_units:"ખબર ન હોય તો ખાલી રાખો. ત્યારે અમે બિલ પરથી અંદાજિત પ્રતિ યુનિટ ખર્ચના આધારે તેનો અંદાજ લગાવીએ છીએ (ઉન્નત અંદાજ જુઓ).",sf_area:"ઉપલબ્ધ છતનું ક્ષેત્રફળ – વૈકલ્પિક",sf_au:"ક્ષેત્રફળનો એકમ",u_sqft:"ચોરસ ફૂટ",u_sqm:"ચોરસ મીટર",sf_day:"દિવસ દરમિયાન વીજળીનો ઉપયોગ",d_low:"ઓછો (મોટાભાગે સાંજ અને રાત)",d_med:"મધ્યમ",d_high:"વધુ (મોટાભાગે દિવસે)",h_day:"સોલાર ફક્ત દિવસે વીજળી બનાવે છે. દિવસે જેટલો વધુ ઉપયોગ, તેટલી વધુ સોલાર વીજળી સીધી કામ આવે છે.",sf_size:"પ્રસ્તાવિત સોલાર કદ (kW) – વૈકલ્પિક",h_size:"સૂચવેલા કદ માટે ખાલી રાખો.",sf_cost:"ઇન્સ્ટોલેશન ખર્ચ પ્રતિ kW (₹)",h_cost:"આ બદલી શકાય તેવો અંદાજ છે, ક્વોટેશન નથી. સાચા ક્વોટેશનથી બદલો.",sf_sub:"ચકાસાયેલ સબસિડી રકમ (₹)",h_sub:"યોજના, તમારી પાત્રતા અને રકમ ચકાસ્યા વગર 0 રાખો.",mo_h:"વધુ વિકલ્પો (વૈકલ્પિક)",sf_maint:"વાર્ષિક જાળવણી ખર્ચ (₹)",h_maint:"ખાલી = ઇન્સ્ટોલેશન ખર્ચના 1% પ્રતિ વર્ષ (અંદાજ).",sf_esc:"વીજ દરમાં વાર્ષિક વધારો (%)",h_esc:"વૈકલ્પિક. 0 સાવચેતીભર્યો વિકલ્પ છે.",sf_rate:"બચી શકે તેવો ઊર્જા દર (₹ પ્રતિ kWh)",h_rate:"દરેક યુનિટની કિંમતનો જે ભાગ સોલાર ખરેખર બચાવી શકે. ખાલી = તમારા સરેરાશ બિલ પ્રતિ યુનિટના 70% (અંદાજ). ફિક્સ ચાર્જ અને કર દૂર થતા નથી.",sf_export:"નિકાસ દર (₹ પ્રતિ kWh)",h_export:"ગ્રિડમાં મોકલેલા યુનિટની ચુકવણી. ખાલી = 0, કારણ કે દર ચકાસાયેલ નથી.",adv_h:"ઉન્નત અંદાજ (બદલી શકાય)",sf_avg:"યુનિટ ખબર ન હોય ત્યારે ધારેલ બિલ પ્રતિ યુનિટ (₹)",sf_psh:"દરરોજ પૂર્ણ તડકાના કલાકો",sf_loss:"સિસ્ટમ નુકસાન (%)",sf_deg:"પેનલનો વાર્ષિક ઘટાડો (%)",sf_use:"છતનો ઉપયોગી ભાગ (%)",sf_apk:"પ્રતિ kW છતનું ક્ષેત્રફળ (ચોરસ મીટર)",sb_calc:"સોલાર બચત ગણો",sb_re:"ફરી ગણતરી કરો",sb_q:"સોલાર ક્વોટેશન તરફ આગળ વધો",q_n:"સોલાર ક્વોટેશન સુવિધા ત્રીજા તબક્કામાં આવશે અને હજી ઉપલબ્ધ નથી. તમે ભરેલું કંઈ સેવ કે મોકલાતું નથી.",e_sub:"સબસિડી ઇન્સ્ટોલેશન ખર્ચથી વધુ ન હોઈ શકે.",e_rng:"કિંમત માન્ય મર્યાદાની બહાર છે.",e_nosz:"સોલાર કદ નક્કી થઈ શક્યું નથી. પ્રસ્તાવિત કદ ભરો, અથવા છતનું ક્ષેત્રફળ અને વપરાશ તપાસો.",rs_h:"તમારો સોલાર અંદાજ",r_sug:"સૂચવેલું સિસ્ટમ કદ",r_used:"વપરાયેલ કદ",r_gd:"દૈનિક ઉત્પાદન",r_gm:"માસિક ઉત્પાદન",r_gy:"વાર્ષિક ઉત્પાદન (પહેલું વર્ષ)",r_pct:"તમારા વપરાશનો જેટલો ભાગ સોલાર બનાવી શકે",r_cost:"અંદાજિત ઇન્સ્ટોલેશન ખર્ચ",r_subs:"સબસિડી (ફક્ત ચકાસાયેલ)",r_net:"અંદાજિત ચોખ્ખો શરૂઆતી ખર્ચ",r_sm:"અંદાજિત માસિક બચત",r_sy:"અંદાજિત વાર્ષિક બચત",r_mt:"વાર્ષિક જાળવણી ખર્ચ",r_nb:"અંદાજિત ચોખ્ખો વાર્ષિક લાભ",r_pay:"સરળ ચુકવણી સમયગાળો",r_25:"25 વર્ષનો કુલ ચોખ્ખો લાભ",yrs:"વર્ષ",n_pay:"આ અંદાજોમાં ચુકવણી સમયગાળાનો અંદાજ લગાવી શકાતો નથી.",r_self:"સીધી વપરાયેલ સોલાર વીજળી (પહેલું વર્ષ)",r_exp:"ગ્રિડમાં મોકલેલી સોલાર વીજળી (પહેલું વર્ષ)",r_roof:"અંદાજિત ઉપયોગી છત ક્ષમતા",r_dsh:"તમારા વપરાશનો દિવસનો ભાગ",b_u:"તમારી માહિતી",b_e:"અંદાજિત",b_a:"ધારણા",v_h:"માસિક વીજળી ખર્ચ",v_now:"અત્યારે",v_aft:"સોલાર પછી (અંદાજિત)",v_g:"માસિક સોલાર ઉત્પાદન વિરુદ્ધ તમારો વપરાશ",as_h:"વપરાયેલી ધારણાઓ",w_roof:"પસંદ કરેલું કદ છતની અંદાજિત ઉપયોગી ક્ષમતા ({x} kW) કરતાં મોટું છે.",w_exp:"સોલાર દિવસે તમારા વપરાશ કરતાં વધુ વીજળી બનાવી શકે. વધારાની વીજળી ગ્રિડમાં જાય છે અને તેની કિંમત નેટ-મીટરિંગ નિયમો અને તમારી ડિસ્કોમ પર આધારિત છે, તેથી ફક્ત તમે ભરેલો નિકાસ દર ગણાયો છે.",w_unit:"માસિક યુનિટ બિલ પરથી અંદાજિત છે, તેથી આ પરિણામો ઓછા ચોક્કસ છે.",w_prelim:"પ્રાથમિક અંદાજ: ચોક્કસ ટેરિફ, નિકાસ દર, સબસિડી અને મંજૂરીઓ ચકાસાયેલ નથી.",w_cap:"બચત તમારા હાલના બિલ સુધી મર્યાદિત કરવામાં આવી છે.",w_inv:"ઇન્વર્ટર બદલવાનો અને અન્ય ભવિષ્યના ખર્ચ સામેલ નથી.",sd:"આ પરિણામો અંદાજ છે, ગેરંટીવાળું ક્વોટેશન કે સત્તાવાર ટેકનિકલ શક્યતા આકારણી નથી. સબસિડી, નેટ મીટરિંગ અને ગ્રિડ કનેક્શન હાલના સત્તાવાર નિયમો અને તમારી પાત્રતા પર આધારિત છે. બચત અને ચુકવણી સમયગાળાની ગેરંટી નથી.",f_h:"ગણતરી કેવી રીતે થાય છે",f_t:"ઉત્પાદન = કદ × પૂર્ણ તડકાના કલાક × (1 − નુકસાન). બચત = સીધી વપરાયેલ સોલાર વીજળી × બચી શકે તેવો દર + નિકાસ યુનિટ × નિકાસ દર. ચોખ્ખો વાર્ષિક લાભ = બચત − જાળવણી. ચુકવણી સમયગાળો = ચોખ્ખો શરૂઆતી ખર્ચ ÷ ચોખ્ખો વાર્ષિક લાભ. 25 વર્ષના આંકડામાં પેનલ ઘટાડો અને ટેરિફ વધારો ગણાય છે.",sg_res:"તમારા વાર્ષિક વપરાશ મુજબ, છતના ક્ષેત્રફળની મર્યાદામાં.",sg_biz:"તમારા દિવસના ઉપયોગ મુજબ જેથી નિકાસ પર ઓછું નિર્ભર રહેવું પડે, છતના ક્ષેત્રફળની મર્યાદામાં.",sg_h:"સૂચનનો આધાર",pr_s:"BijliSmart – સોલાર બચત અંદાજ રિપોર્ટ"}
+};
+
+/* ===== CALCULATION (pure functions, no page code) ===== */
+// CALC-START
+const LIM={bill:1e8,units:1e7}; // max ₹10 crore bill, 1 crore kWh
+function norm(s){ // accepts Gujarati/Hindi digits and commas, returns plain text
+  return String(s==null?"":s).replace(/[\u0966-\u096F]/g,c=>c.charCodeAt(0)-0x0966)
+    .replace(/[\u0AE6-\u0AEF]/g,c=>c.charCodeAt(0)-0x0AE6).replace(/,/g,"").trim();
+}
+function num(raw,max,isDays){
+  const s=norm(raw);
+  if(s==="")return{e:"e_req"};
+  if(/^[-\u2212]\s*\d/.test(s))return{e:"e_neg"};
+  if(!/^(\d+\.?\d*|\.\d+)$/.test(s))return{e:"e_nan"};
+  const v=Number(s);
+  if(isDays)return(Number.isInteger(v)&&v>=1&&v<=366)?{v}:{e:"e_days"};
+  if(v<=0)return{e:"e_zero"};
+  if(v>max)return{e:"e_big"};
+  return{v};
+}
+function pct(now,prev){return (now-prev)/prev*100}
+function analyze(i){
+  const errs={},val={};
+  const chk=(k,max,d)=>{const r=num(i[k],max,d);if(r.e)errs[k]=r.e;else val[k]=r.v};
+  chk("bill",LIM.bill);chk("units",LIM.units);chk("days",0,true);
+  const P=["pbill","punits","pdays"],any=P.some(k=>norm(i[k])!=="");
+  if(any)P.forEach(k=>{if(norm(i[k])==="")errs[k]="e_prev";else chk(k,k==="pbill"?LIM.bill:LIM.units,k==="pdays")});
+  if(Object.keys(errs).length)return{errs};
+  const{bill,units,days}=val;
+  const r={bill,units,days,cpu:bill/units,du:units/days,dc:bill/days,m30:units/days*30};
+  r.warn=r.cpu<1||r.cpu>25;
+  if(any){const pu30=val.punits/val.pdays*30,pb30=val.pbill/val.pdays*30;
+    r.cmp={pu30,pb30,du:pct(r.m30,pu30),db:pct(r.dc*30,pb30)}}
+  return r;
+}
+// CALC-END
+
+/* ===== PAGE CODE ===== */
+const $=id=>document.getElementById(id);
+const F=["bill","units","days","pbill","punits","pdays"];
+let lang="gu",last=null,curErrs={};
+try{const s=localStorage.getItem("bs_lang");if(T[s])lang=s}catch(e){}
+const t=k=>T[lang][k]||k;
+const f2=v=>v.toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+function fld(id,k,mode,val){return `<label for="${id}" data-i="${k}"></label><input id="${id}" type="text" inputmode="${mode}" autocomplete="off" value="${val||""}" aria-describedby="e-${id}"><span class="err" id="e-${id}"></span>`}
+$("fmain").innerHTML=fld("bill","f_bill","decimal")+fld("units","f_units","decimal")+fld("days","f_days","numeric",30);
+$("fprev").innerHTML=fld("pbill","f_pbill","decimal")+fld("punits","f_punits","decimal")+fld("pdays","f_pdays","numeric");
+
+function showErrs(e){
+  curErrs=e||{};
+  F.forEach(k=>{const m=curErrs[k];$("e-"+k).textContent=m?t(m):"";
+    if(m)$(k).setAttribute("aria-invalid","true");else $(k).removeAttribute("aria-invalid")});
+  $("sum").textContent=Object.keys(curErrs).length?t("e_sum"):"";
+}
+function applyLang(){
+  document.documentElement.lang=lang;$("lang").value=lang;
+  document.querySelectorAll("[data-i]").forEach(e=>e.textContent=t(e.dataset.i));
+  showErrs(curErrs);render();sLang();
+}
+function show(v){
+  document.querySelectorAll(".v").forEach(e=>e.classList.toggle("on",e.id==="v-"+v));
+  document.querySelectorAll("nav button").forEach(b=>{const on=b.dataset.go===v;b.classList.toggle("on",on);
+    if(on)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
+  window.scrollTo(0,0);
+}
+function run(){
+  const i={};F.forEach(k=>i[k]=$(k).value);
+  const r=analyze(i);
+  if(r.errs){last=null;showErrs(r.errs);render();$(F.find(k=>r.errs[k])).focus();return}
+  showErrs({});r.cat=$("cat").value;r.disc=$("dc").value;last=r;render();$("rh").focus();
+}
+function chg(p){const a=Math.abs(p);return a<0.005?t("same"):f2(a)+"% "+(p>0?t("up"):t("dn"))}
+function render(){
+  const box=$("res");
+  if(!last){box.innerHTML="";return}
+  const r=last;
+  const m=(l,v)=>`<div class="m"><span>${l}</span><b>${v}</b></div>`;
+  const dcTxt=r.disc==="o"?t("other"):r.disc;
+  const date=new Date().toLocaleDateString({gu:"gu-IN",hi:"hi-IN",en:"en-IN"}[lang]);
+  let h=`<div class="card"><h2 id="rh" tabindex="-1">${t("r_h")}</h2>`+
+   `<p class="po"><b>${t("pr_h")}</b> — ${t("pr_d")}: ${date}</p>`+
+   `<p class="mu">${t("f_cat")}: ${t("c_"+r.cat)} • ${t("f_dc")}: ${dcTxt}</p><div class="grid">`+
+   m(t("r_bill"),"₹"+f2(r.bill))+m(t("r_units"),f2(r.units)+" kWh")+m(t("r_cpu"),"₹"+f2(r.cpu))+
+   m(t("r_du"),f2(r.du)+" kWh")+m(t("r_dc"),"₹"+f2(r.dc))+m(t("r_m"),f2(r.m30)+" kWh")+`</div>`;
+  if(r.warn)h+=`<p class="wn">${t("w_cpu")}</p>`;
+  if(r.cmp)h+=`<h3>${t("cmp_h")}</h3><div class="grid">`+m(t("cmp_u"),f2(r.cmp.pu30)+" → "+f2(r.m30)+" kWh<br>"+chg(r.cmp.du))+
+   m(t("cmp_b"),"₹"+f2(r.cmp.pb30)+" → ₹"+f2(r.dc*30)+"<br>"+chg(r.cmp.db))+`</div>`;
+  h+=`<h3>${t("ex_h")}</h3><p>${t("ex").replace("{b}",f2(r.bill)).replace("{u}",f2(r.units)).replace("{d}",r.days).replace("{c}",f2(r.cpu))}</p>`+
+   `<p class="mu">${t("n_est")}</p>`+
+   `<h3>${t("t_h")}</h3><ul>${t("tips_"+r.cat).split("|").map(x=>`<li>${x}</li>`).join("")}</ul>`+
+   `<p class="mu">${t("disc")}</p><button class="btn noprint" type="button" onclick="window.print()">${t("print")}</button></div>`;
+  box.innerHTML=h;
+}
+$("lang").onchange=e=>{lang=e.target.value;try{localStorage.setItem("bs_lang",lang)}catch(x){}applyLang()};
+$("formcard").addEventListener("submit",e=>{e.preventDefault();run()});
+$("reset").onclick=()=>{F.forEach(k=>$(k).value="");$("days").value=30;$("cat").value="res";$("dc").selectedIndex=0;last=null;showErrs({});render();$("bill").focus()};
+$("clear").onclick=()=>{try{localStorage.clear()}catch(e){}alert(t("cleared"))};
+document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>show(b.dataset.go));
+/* ===== SOLAR CALCULATOR: pure calculation ===== */
+// SCALC-START
+const SDF={cost:55000,esc:0,avg:7,psh:5,loss:20,deg:0.5,use:70,apk:10,avoid:0.7,share:{low:0.25,med:0.5,high:0.75},sqft:0.092903};
+function snum(raw,o){
+  const s=norm(raw);
+  if(s==="")return o.req?{e:"e_req"}:{v:null};
+  if(/^[-\u2212]\s*\d/.test(s))return{e:"e_neg"};
+  if(!/^(\d+\.?\d*|\.\d+)$/.test(s))return{e:"e_nan"};
+  const v=Number(s);
+  if(v===0&&!o.zero)return{e:"e_zero"};
+  if(v<(o.min||0)||v>o.max)return{e:"e_rng"};
+  return{v};
+}
+function solarCalc(i){
+  const spec={bill:{req:1,max:1e8},units:{max:1e7},area:{max:1e7},size:{max:1e4},cost:{min:1000,max:5e5},sub:{zero:1,max:1e9},maint:{zero:1,max:1e8},esc:{zero:1,max:15},rate:{max:100},export:{zero:1,max:100},avg:{min:0.5,max:100},psh:{min:2,max:7},loss:{zero:1,max:60},deg:{zero:1,max:5},use:{min:10,max:100},apk:{min:5,max:30}};
+  const errs={},v={};
+  for(const k in spec){const r=snum(i[k],spec[k]);if(r.e)errs[k]=r.e;else v[k]=r.v}
+  if(Object.keys(errs).length)return{errs};
+  const A={cost:v.cost??SDF.cost,esc:v.esc??SDF.esc,avg:v.avg??SDF.avg,psh:v.psh??SDF.psh,loss:v.loss??SDF.loss,deg:v.deg??SDF.deg,use:v.use??SDF.use,apk:v.apk??SDF.apk};
+  const bill=v.bill,unitsEst=v.units===null,units=unitsEst?bill/A.avg:v.units;
+  const cons=units*12,share=SDF.share[i.day]??0.5;
+  const dayKw=A.psh*(1-A.loss/100),yrKw=dayKw*365;
+  const areaSqm=v.area===null?null:v.area*(i.au==="sqm"?1:SDF.sqft);
+  const roofKw=areaSqm===null?null:areaSqm*A.use/100/A.apk;
+  const target=(i.cat==="res"?cons:cons*share)/yrKw;
+  const sug=Math.floor((roofKw===null?target:Math.min(target,roofKw))*2)/2;
+  const sizeUser=v.size!==null,size=sizeUser?v.size:sug;
+  if(!(size>0))return{errs:{size:"e_nosz"}};
+  const gen1=size*yrKw,dayCons=cons*share,cost=size*A.cost,sub=v.sub??0;
+  if(sub>cost)return{errs:{sub:"e_sub"}};
+  const net=cost-sub,maint=v.maint??cost*0.01,avoid=v.rate??bill/units*SDF.avoid,exp=v.export??0;
+  let cum=-net,sav1=0,self1=0,ex1=0,capped=false;
+  for(let y=1;y<=25;y++){
+    const g=gen1*Math.pow(1-A.deg/100,y-1),self=Math.min(g,dayCons),ex=g-self,m=Math.pow(1+A.esc/100,y-1);
+    let sv=self*avoid*m;const lim=bill*12*m;if(sv>lim){sv=lim;if(y===1)capped=true}
+    const s=sv+ex*exp;cum+=s-maint;
+    if(y===1){sav1=s;self1=self;ex1=ex}
+  }
+  const nb=sav1-maint;
+  return{bill,units,unitsEst,cons,share,dayKw,yrKw,roofKw,sug,size,sizeUser,gen1,genD:size*dayKw,genM:gen1/12,pct:gen1/12/units*100,cost,sub,net,maint,maintAuto:v.maint===null,avoid,avoidAuto:v.rate===null,exp,expAuto:v.export===null,sav1,self1,ex1,capped,nb,payback:nb>0?net/nb:null,cum25:cum,postM:Math.max(0,bill-sav1/12),warnRoof:roofKw!==null&&size>roofKw+1e-9,excess:ex1>1e-9,A};
+}
+// SCALC-END
+
+/* ===== SOLAR CALCULATOR: page code ===== */
+const SK=["bill","units","area","size","cost","sub","maint","esc","rate","export","avg","psh","loss","deg","use","apk"];
+const SF=SK.map(k=>"s_"+k);
+const SDEF={s_cost:"55000",s_esc:"0",s_avg:"7",s_psh:"5",s_loss:"20",s_deg:"0.5",s_use:"70",s_apk:"10"};
+let sLast=null,sErr={};
+function sfld(k,lab,hint){const id="s_"+k;return `<label for="${id}" data-i="${lab}"></label><input id="${id}" type="text" inputmode="decimal" autocomplete="off" value="${SDEF[id]||""}" aria-describedby="${hint?"h-"+id+" ":""}e-${id}">${hint?`<span class="mu" id="h-${id}" data-i="${hint}"></span>`:""}<span class="err" id="e-${id}"></span>`}
+const ssel=(id,lab,o)=>`<label for="${id}" data-i="${lab}"></label><select id="${id}">${o.map(x=>`<option value="${x[0]}" data-i="${x[1]}"></option>`).join("")}</select>`;
+$("sbody").innerHTML=ssel("s_cat","f_cat",[["res","c_res"],["com","c_com"],["ind","c_ind"]])+
+ `<label for="s_state" data-i="sf_state"></label><select id="s_state" disabled><option data-i="st_gj"></option></select>`+
+ `<label for="s_city" data-i="sf_city"></label><select id="s_city"></select>`+
+ sfld("bill","sf_bill")+sfld("units","sf_units","h_units")+sfld("area","sf_area")+ssel("s_au","sf_au",[["sqft","u_sqft"],["sqm","u_sqm"]])+
+ ssel("s_day","sf_day",[["low","d_low"],["med","d_med"],["high","d_high"]])+`<span class="mu" data-i="h_day"></span>`+
+ sfld("size","sf_size","h_size")+sfld("cost","sf_cost","h_cost")+sfld("sub","sf_sub","h_sub")+
+ `<details><summary data-i="mo_h"></summary>`+sfld("maint","sf_maint","h_maint")+sfld("esc","sf_esc","h_esc")+sfld("rate","sf_rate","h_rate")+sfld("export","sf_export","h_export")+`</details>`+
+ `<details><summary data-i="adv_h"></summary>`+sfld("avg","sf_avg")+sfld("psh","sf_psh")+sfld("loss","sf_loss")+sfld("deg","sf_deg")+sfld("use","sf_use")+sfld("apk","sf_apk")+`</details>`;
+$("s_day").value="med";
+function showSErr(e){
+  sErr=e||{};
+  SF.forEach(id=>{const m=sErr[id];$("e-"+id).textContent=m?t(m):"";if(m)$(id).setAttribute("aria-invalid","true");else $(id).removeAttribute("aria-invalid")});
+  $("ssum").textContent=Object.keys(sErr).length?t("e_sum"):"";
+}
+function sLang(){
+  const c=$("s_city"),keep=Math.max(0,c.selectedIndex);
+  c.innerHTML=t("cities").split("|").map(x=>`<option>${x}</option>`).join("");c.selectedIndex=keep;
+  showSErr(sErr);sRender();
+}
+function sRun(){
+  const i={cat:$("s_cat").value,au:$("s_au").value,day:$("s_day").value};
+  SK.forEach(k=>i[k]=$("s_"+k).value);
+  const r=solarCalc(i);
+  if(r.errs){
+    const e={};for(const k in r.errs)e["s_"+k]=r.errs[k];
+    sLast=null;showSErr(e);sRender();
+    const el=$(SF.find(id=>e[id])),d=el.closest("details");if(d)d.open=true;el.focus();return;
+  }
+  showSErr({});r.cat=i.cat;sLast=r;sRender();$("srh").focus();
+}
+function sRender(){
+  const box=$("sres");
+  if(!sLast){box.innerHTML="";return}
+  const r=sLast,A=r.A;
+  const f0=v=>v.toLocaleString("en-IN",{maximumFractionDigits:0}),fk=v=>v.toLocaleString("en-IN",{maximumFractionDigits:2}),R=v=>"₹"+f0(v);
+  const m=(l,v,b)=>`<div class="m"><span>${l}${b?`<em class="bd">${t(b)}</em>`:""}</span><b>${v}</b></div>`;
+  const date=new Date().toLocaleDateString({gu:"gu-IN",hi:"hi-IN",en:"en-IN"}[lang]);
+  const pay=r.payback===null?t("n_pay"):fk(r.payback)+" "+t("yrs");
+  const w=[];
+  if(r.warnRoof)w.push(t("w_roof").replace("{x}",fk(r.roofKw)));
+  if(r.excess)w.push(t("w_exp"));
+  if(r.unitsEst)w.push(t("w_unit"));
+  if(r.capped)w.push(t("w_cap"));
+  w.push(t("w_prelim"),t("w_inv"));
+  const wp=Math.min(100,r.postM/r.bill*100),gp=Math.min(100,r.pct);
+  const li=(l,v,b)=>`<li>${l}: <b>${v}</b><em class="bd">${t(b||"b_a")}</em></li>`;
+  let h=`<div class="card"><h2 id="srh" tabindex="-1">${t("rs_h")}</h2>`+
+   `<p class="po"><b>${t("pr_s")}</b> — ${t("pr_d")}: ${date}</p>`+
+   `<p class="mu">${t("f_cat")}: ${t("c_"+r.cat)} • ${t("sf_city")}: ${$("s_city").value}, ${t("st_gj")}</p>`+
+   `<div class="grid">`+m(t("r_sug"),fk(r.sug)+" kW","b_e")+m(t("r_used"),fk(r.size)+" kW",r.sizeUser?"b_u":"b_e")+
+   m(t("r_gm"),f0(r.genM)+" kWh","b_e")+m(t("r_cost"),R(r.cost),"b_e")+m(t("r_net"),R(r.net),"b_e")+
+   m(t("r_sm"),R(r.sav1/12),"b_e")+m(t("r_sy"),R(r.sav1),"b_e")+m(t("r_pay"),pay,"b_e")+`</div>`+
+   `<p class="mu">${t("sg_h")}: ${t(r.cat==="res"?"sg_res":"sg_biz")}</p>`+
+   `<h3>${t("v_h")}</h3><p class="mu">${t("v_now")}: ${R(r.bill)}</p><div class="bar" role="img" aria-label="${t("v_now")} ${R(r.bill)}"><i style="width:100%"></i></div>`+
+   `<p class="mu">${t("v_aft")}: ${R(r.postM)}</p><div class="bar" role="img" aria-label="${t("v_aft")} ${R(r.postM)}"><i style="width:${wp}%"></i></div>`+
+   `<p class="mu">${t("v_g")}: ${fk(r.pct)}%</p><div class="bar" role="img" aria-label="${fk(r.pct)}%"><i style="width:${gp}%"></i></div>`+
+   `<div class="grid">`+m(t("r_gd"),fk(r.genD)+" kWh","b_e")+m(t("r_gy"),f0(r.gen1)+" kWh","b_e")+m(t("r_pct"),fk(r.pct)+"%","b_e")+
+   m(t("r_self"),f0(r.self1)+" kWh","b_e")+m(t("r_exp"),f0(r.ex1)+" kWh","b_e")+m(t("r_subs"),R(r.sub),"b_u")+
+   m(t("r_mt"),R(r.maint),r.maintAuto?"b_a":"b_u")+m(t("r_nb"),R(r.nb),"b_e")+m(t("r_25"),(r.cum25<0?"−":"")+R(Math.abs(r.cum25)),"b_e")+
+   (r.roofKw!==null?m(t("r_roof"),fk(r.roofKw)+" kW","b_e"):"")+`</div>`+
+   `<h3>${t("as_h")}</h3><ul class="as">`+
+   li(t("sf_psh"),fk(A.psh))+li(t("sf_loss"),fk(A.loss)+"%")+li(t("sf_deg"),fk(A.deg)+"%")+li(t("sf_use"),fk(A.use)+"%")+li(t("sf_apk"),fk(A.apk))+
+   li(t("sf_cost"),R(A.cost))+li(t("sf_esc"),fk(A.esc)+"%")+li(t("r_dsh"),fk(r.share*100)+"%")+
+   li(t("sf_rate"),"₹"+fk(r.avoid),r.avoidAuto?"b_a":"b_u")+li(t("sf_export"),"₹"+fk(r.exp),r.expAuto?"b_a":"b_u")+
+   (r.unitsEst?li(t("sf_avg"),"₹"+fk(A.avg)):"")+`</ul>`+
+   `<h3>${t("f_h")}</h3><p class="mu">${t("f_t")}</p>`+
+   w.map(x=>`<p class="wn">${x}</p>`).join("")+
+   `<p class="mu">${t("sd")}</p>`+
+   `<button class="btn noprint" type="button" id="s_re">${t("sb_re")}</button><button class="btn alt noprint" type="button" onclick="window.print()">${t("print")}</button>`+
+   `<button class="btn alt noprint" type="button" id="s_q">${t("sb_q")}</button><p class="wn" id="qn" hidden>${t("q_n")}</p></div>`;
+  box.innerHTML=h;
+  $("s_re").onclick=sRun;$("s_q").onclick=()=>{$("qn").hidden=false};
+}
+$("sform").addEventListener("submit",e=>{e.preventDefault();sRun()});
+$("s_reset").onclick=()=>{SF.forEach(id=>$(id).value=SDEF[id]||"");["s_cat","s_au","s_city"].forEach(id=>$(id).selectedIndex=0);$("s_day").value="med";sLast=null;showSErr({});sRender();$("s_bill").focus()};
+
+show("home");applyLang();
+if("serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
