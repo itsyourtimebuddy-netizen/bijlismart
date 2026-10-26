@@ -1,6 +1,6 @@
 // Service worker: saves the app files on first visit so it works offline.
 // When you change any file, change VERSION so users get the update.
-const VERSION = "bijlismart-v4";
+const VERSION = "bijlismart-v8";
 const FILES = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)));
